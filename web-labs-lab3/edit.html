@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Car</title>
+    <link rel="stylesheet" href="css/edit.css"> <!-- Include the CSS file here -->
+</head>
+<body>
+<h1>Edit Car</h1>
+<form id="edit-car-form">
+    <input type="hidden" id="car-id">
+    <label for="model">Model:</label>
+    <input type="text" id="model" required>
+    <label for="price">Price:</label>
+    <input type="number" id="price" required>
+    <label for="year">Year:</label>
+    <input type="number" id="year" required>
+    <label for="country">Country:</label>
+    <input type="text" id="country" required>
+    <button type="submit">Update Car</button>
+</form>
+<script type="module" src="./js/edit.js"></script>
+
+<script src="js/fetcher.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const editCarForm = document.getElementById('edit-car-form');
+
+        // Load car details when editing
+        async function loadCarDetails(carId) {
+            const response = await fetchCarById(carId);
+            if (response) {
+                document.getElementById('car-id').value = carId;
+                document.getElementById('model').value = response.model;
+                document.getElementById('price').value = response.price;
+                document.getElementById('year').value = response.year;
+                document.getElementById('country').value = response.country;
+            }
+        }
+
+        // Assume the car ID is passed via the URL (e.g., edit.html?carId=123)
+        const params = new URLSearchParams(window.location.search);
+        const carId = params.get('carId');
+        if (carId) {
+            loadCarDetails(carId);
+        }
+
+        // Handle the form submission for updating a car
+        editCarForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const updatedCar = {
+                model: document.getElementById('model').value,
+                price: document.getElementById('price').value,
+                year: document.getElementById('year').value,
+                country: document.getElementById('country').value,
+            };
+
+            const carId = document.getElementById('car-id').value;
+            await updateCar(carId, updatedCar);
+        });
+    });
+</script>
+</body>
+
+</html>
